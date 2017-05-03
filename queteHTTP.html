@@ -1,0 +1,115 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous" <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <script src="jquery-3.2.1.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  <title>Meteo</title>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <h1>Ma météo</h1>
+      <div id="form" class="col-md-6 col-md-offset-3">
+        <input id="town" type="text" class="form-control" placeholder="Votre ville">
+      </div>
+      <div id="button" class="col-md-6 col-md-offset-5">
+        <button id="button" type="button" class="btn btn-danger">GO !</button>
+      </div>
+
+      <div id="container-meteo" class="col-md-6 col-md-offset-5">
+        <p class="finalweather"></p>
+        <p class="finaltemps"></p>
+      </div>
+
+    </div>
+  </div>
+
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+    
+    body {
+      background-image: url("http://www.donnery.fr/medias/sites/2/2015/02/meteo1.jpg");
+      background-position: center;
+    }
+    
+    .container-fluid {
+      text-align: center;
+    }
+    
+    #form {
+      width: 40%;
+    }
+    
+    #container-meteo {
+      background-color: antiquewhite;
+      height: 20%;
+      width: 10%;
+   
+      opacity: 1;
+    }
+    
+    p {
+      font-size: 30px;
+      color: black;
+    }
+  </style>
+
+
+  <script>
+  addEventListener('DOMContentLoaded', function (event) {
+      //on cree la fonction météo pour appeler le GET
+      function meteo(meteo) {
+        // on choisi dans le GET le temps et les degres
+        document.querySelector(".finalweather").textContent = JSON.stringify(meteo.weather["0"].main)
+        document.querySelector(".finaltemps").textContent = JSON.stringify(meteo.main.temp + " degres")
+        //petite condition si il fait froid ou non 
+        if (meteo.main.temp <= 12) {
+          alert("oooh dur!");
+          document.querySelector("body").style.backgroundImage = "url('http://www.guide-de-survie.com/wp-content/uploads/le-froid-sans-sac-de-couchage-750x400.jpg')";
+        }
+        else {
+          alert("C'est une bonne journée !")
+          document.querySelector("body").style.backgroundImage = "url('http://img.bfmtv.com/c/1256/708/42d/78a9a6bdcbf8f69205bae7fed90c8.jpg')";
+        }
+      }
+      // au clic du bouton on fait la requete GET qui prend en compte la value de mon input
+      document.querySelector("#button").addEventListener("click", function () {
+        var xhr = new XMLHttpRequest();
+        if (xhr) {
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                //on cree le tableau
+                meteo(data);
+              } else {
+                alert('Une erreur s’est produite.');
+              }
+            }
+          };
+          xhr.open('GET', 'http://api.openweathermap.org/data/2.5/weather?q=' + document.querySelector("#town").value + '&units=metric&APPID=e34cf562df1675cdf7af864517ebc16d ');
+          xhr.send();
+        }
+      });
+    })
+  </script>
+
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
